@@ -2,3 +2,6 @@ notebooks/b_PreProcess/.ipynb_checkpoints/
 data/
 notebooks/c_Experiments/.ipynb_checkpoints/
 notebooks/c_Experiments/mlruns/
+zenenv
+__pycache__
+steps/__pycache__
