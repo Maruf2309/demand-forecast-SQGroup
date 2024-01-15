@@ -4,10 +4,17 @@ import logging
 from typing import Union
 
 
-@step
+@step(enable_cache=True)
 def clean_data(data: pd.DataFrame) -> Union[pd.DataFrame, None]:
     """
-    Clean the data by removing duplicates and null values.
+    Clean the data by removing duplicates, null values, and converting columns to appropriate types.
+
+    Args:
+        data (pd.DataFrame): The input data.
+
+    Returns:
+        pd.DataFrame: The cleaned data. None if an error occurs.
+
     """
     try:
         logging.info("Cleaning data...")
@@ -33,10 +40,9 @@ def clean_data(data: pd.DataFrame) -> Union[pd.DataFrame, None]:
 
         # literacy rate conversion
         data['literacy_rate_perc'] = data.literacy_rate_perc.astype('float32')
-        
+
         logging.info("Data cleaned.")
         return data
     except Exception as e:
         logging.error(f"Error cleaning data: {e}")
         return None
-

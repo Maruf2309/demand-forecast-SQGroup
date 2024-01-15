@@ -4,7 +4,7 @@ import logging
 from typing import Union
 
 
-@step
+@step(enable_cache=True)
 def ingest_data(data_source: str) -> Union[pd.DataFrame, None]:
     """
     Ingests data from a given path.
@@ -17,7 +17,8 @@ def ingest_data(data_source: str) -> Union[pd.DataFrame, None]:
     """
     try:
         logging.info(f"Reading data from {data_source}")
-        data = pd.read_csv(data_source,  encoding="unicode_escape")
+        data = pd.read_csv(
+            data_source,  encoding="unicode_escape", low_memory=False)
         logging.info(f"Data read from {data_source}")
         return data
     except Exception as e:
