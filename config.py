@@ -1,1 +1,1 @@
-DATA_SOURCE = 'D:/demand-forecast-SQGroup/data/sales_BYA.csv'
+DATA_SOURCE = 'data/sales_BYA.csv'
