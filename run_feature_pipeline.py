@@ -18,7 +18,7 @@ def run_feature_pipeline() -> None:
         data = ingest_data(config.DATA_SOURCE)
         data = clean_data(data)
         data = encode_data(data)
-        train, valid, test = split_data(data)
+        # train, valid, test = split_data(data)
         logging.info("Feature pipeline completed.")
 
     except Exception as e:
