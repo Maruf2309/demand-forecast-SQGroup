@@ -2,10 +2,11 @@ from zenml import step
 import pandas as pd
 import logging
 from typing import Union
+from typing_extensions import Annotated
 
 
-@step(enable_cache=True)
-def ingest_data(data_source: str) -> Union[pd.DataFrame, None]:
+@step(name='Ingest Data')
+def ingest_data(data_source: Annotated[str, 'data_source']) -> Annotated[pd.DataFrame, 'data']:
     """
     Ingests data from a given path.
 
@@ -23,4 +24,4 @@ def ingest_data(data_source: str) -> Union[pd.DataFrame, None]:
         return data
     except Exception as e:
         logging.error(f"Error reading data from {data_source}: {e}")
-        return None
+        raise e

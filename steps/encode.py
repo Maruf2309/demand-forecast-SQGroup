@@ -4,10 +4,11 @@ from sklearn.preprocessing import OrdinalEncoder
 from typing import Union
 import logging
 import numpy as np
+from typing_extensions import Annotated
 
 
 @step(enable_cache=True)
-def encode_data(data: pd.DataFrame) -> Union[pd.DataFrame, None]:
+def encode_data(data: Annotated[pd.DataFrame, 'cleaned_data']) -> Annotated[pd.DataFrame, 'encoded_data']:
     """
     Encode categorical features of the data.
 
@@ -81,6 +82,11 @@ def encode_data(data: pd.DataFrame) -> Union[pd.DataFrame, None]:
         # optimize for memory
         for col in data.select_dtypes('int64').columns:
             data[col] = data[col].astype('int32')
+
+        # Aggregate
+        data = data[['timestamp', 'net_price', 'qtym']]
+        data = data.groupby(by='timestamp').mean().reset_index()
+
         logging.info('Encoding categorical features completed.')
         return data
     except Exception as e:

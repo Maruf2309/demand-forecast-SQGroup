@@ -2,10 +2,11 @@ from zenml import step
 import pandas as pd
 import logging
 from typing import Union
+from typing_extensions import Annotated
 
 
-@step(enable_cache=True)
-def clean_data(data: pd.DataFrame) -> Union[pd.DataFrame, None]:
+@step(name='Clean Data')
+def clean_data(data: Annotated[pd.DataFrame, 'data']) -> Annotated[pd.DataFrame, 'cleaned_data']:
     """
     Clean the data by removing duplicates, null values, and converting columns to appropriate types.
 
@@ -22,6 +23,9 @@ def clean_data(data: pd.DataFrame) -> Union[pd.DataFrame, None]:
         data.dropna(inplace=True)
         # format the date time
         data['date'] = pd.to_datetime(data.date).values
+
+        # Sort
+        data.sort_values(by='date', inplace=True)
 
         # renaming cols
         data.columns = [col.lower().strip().replace(' ', '_')
@@ -41,8 +45,11 @@ def clean_data(data: pd.DataFrame) -> Union[pd.DataFrame, None]:
         # literacy rate conversion
         data['literacy_rate_perc'] = data.literacy_rate_perc.astype('float32')
 
+        # rename date -> timestamp
+        data.rename({'date': 'timestamp'}, axis=1, inplace=True)
+
         logging.info("Data cleaned.")
         return data
     except Exception as e:
         logging.error(f"Error cleaning data: {e}")
-        return None
+        raise e
