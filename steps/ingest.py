@@ -18,8 +18,8 @@ def ingest_data(data_source: Annotated[str, 'data_source']) -> Annotated[pd.Data
     """
     try:
         logging.info(f"Reading data from {data_source}")
-        data = pd.read_csv(
-            data_source,  encoding="unicode_escape", low_memory=False)
+        data = pd.read_parquet(data_source)
+        print(data.shape)
         logging.info(f"Data read from {data_source}")
         return data
     except Exception as e:

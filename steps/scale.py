@@ -41,7 +41,7 @@ def scale_data(data: Annotated[pd.DataFrame, 'data to scale'],
             f'Scaler model saved to {os.path.join(config.ARTIFACTS_DIR, "scaler.pkl")}')
         data.dropna(inplace=True)
         print(data.head())
-        data.to_parquet('data/feature.parquet', index=False)
+        data.to_parquet(config.FEATURE_STORE, index=False)
         return data
     except Exception as e:
         logger.error(f"in scale_data(): {e}")
