@@ -40,6 +40,7 @@ def train_model(
             grid.fit(X_train, y_train)
             model = grid.best_estimator_
             mlflow.log_params(grid.best_params_)
+            mlflow.xgboost.log_model(model, model_name)
 
         logging.info("Model Tuned successfully.")
         return model
