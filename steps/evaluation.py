@@ -32,32 +32,32 @@ def compute_aic_bic(y, y_pred, num_params):
     rss = np.sum(resid ** 2)
     aic = 2 * num_params - 2 * np.log(rss)
     bic = n * np.log(rss / n) + num_params * np.log(n)
-    return float(aic.values), float(bic.values)
+    return float(aic), float(bic)
 
 
-@step(name='Evalution Step', experiment_tracker=experiment_tracker.name, enable_step_logs=True, enable_artifact_metadata=True, enable_artifact_visualization=True)
+# @step(name='Evalution Step', experiment_tracker=experiment_tracker.name, enable_step_logs=True, enable_artifact_metadata=True, enable_artifact_visualization=True)
 def evaluate_model(
     model: Annotated[BaseEstimator, 'trained Model'],
     X: pd.DataFrame,
     y: pd.DataFrame,
-) -> None:
+) -> Annotated[float, 'r2_score']:
     """
     Evaluate the model
     """
     try:
         logging.info("Evaluating model...")
-        y_pred = model.predict(X).reshape(y.shape[0], 1)
+        y_pred = model.predict(X)
 
         # MAPE, MSE, RMSE, R2, AIC, BIC
         mape = mean_absolute_percentage_error(y, y_pred)
         mse = mean_squared_error(y, y_pred)
         r2 = r2_score(y, y_pred)
-        rmse_ = float(rmse(y, y_pred))
+        rmse_ = float(np.sqrt(mse))
         num_params = X.shape[1] + 2
         aic_, bic_ = compute_aic_bic(y, y_pred, num_params)
         mlflow.log_metrics(dict(mape=mape, mse=mse, r2=r2,
                            rmse=rmse_, aic=aic_, bic=bic_))
-
+        return r2
     except Exception as e:
         logging.error(e)
         raise e

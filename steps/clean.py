@@ -21,6 +21,8 @@ def clean_data(data: Annotated[pd.DataFrame, 'data']) -> Annotated[pd.DataFrame,
         logging.info("Cleaning data...")
         data.drop_duplicates(keep='last', inplace=True)
         data.dropna(inplace=True)
+        data.drop(columns=['client_id', 'CID', 'Base Size'], inplace=True)
+        
         # format the date time
         data['date'] = pd.to_datetime(data.date).values
 
@@ -42,8 +44,10 @@ def clean_data(data: Annotated[pd.DataFrame, 'data']) -> Annotated[pd.DataFrame,
         for col in data.select_dtypes('int64').columns:
             data[col] = data[col].astype('int32')
 
-        # literacy rate conversion
+        # lType conversion
         data['literacy_rate_perc'] = data.literacy_rate_perc.astype('float32')
+        data['kpi'] = data.kpi.astype('float16')
+        data['tmtm'] = data.tmtm.astype('float32')
 
         # rename date -> timestamp
         data.rename({'date': 'timestamp'}, axis=1, inplace=True)
