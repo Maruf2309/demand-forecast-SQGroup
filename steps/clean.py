@@ -5,7 +5,7 @@ from typing import Union
 from typing_extensions import Annotated
 
 
-@step(name='Clean Data')
+@step(name='Clean Data', enable_cache=False, enable_step_logs=True)
 def clean_data(data: Annotated[pd.DataFrame, 'data']) -> Annotated[pd.DataFrame, 'cleaned_data']:
     """
     Clean the data by removing duplicates, null values, and converting columns to appropriate types.
@@ -18,7 +18,6 @@ def clean_data(data: Annotated[pd.DataFrame, 'data']) -> Annotated[pd.DataFrame,
 
     """
     try:
-        logging.info("Cleaning data...")
         data.drop_duplicates(keep='last', inplace=True)
         data.dropna(inplace=True)
         data.drop(columns=['client_id', 'CID', 'Base Size'], inplace=True)

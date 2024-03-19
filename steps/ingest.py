@@ -1,12 +1,12 @@
 from zenml import step
 import pandas as pd
-import logging
+import logging, config
 from typing import Union
 from typing_extensions import Annotated
 
 
-@step(name='Ingest Data')
-def ingest_data(data_source: Annotated[str, 'data_source']) -> Annotated[pd.DataFrame, 'data']:
+@step(name='Ingest Data', enable_cache=False, enable_step_logs=True)
+def ingest_data(data_source: str) -> Annotated[pd.DataFrame, 'data']:
     """
     Ingests data from a given path.
 
@@ -17,11 +17,7 @@ def ingest_data(data_source: Annotated[str, 'data_source']) -> Annotated[pd.Data
         The data as a string.
     """
     try:
-        logging.info(f"Reading data from {data_source}")
-        data = pd.read_parquet(data_source)
-        print(data.shape)
-        logging.info(f"Data read from {data_source}")
-        return data
+        return pd.read_parquet(path=data_source)
     except Exception as e:
-        logging.error(f"Error reading data from {data_source}: {e}")
+        logging.error(f"Error reading data from {config.DATA_SOURCE}: {e}")
         raise e

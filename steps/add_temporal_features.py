@@ -14,12 +14,10 @@ def AddTemporalFeatures(targets: Annotated[pd.DataFrame, 'encoded data']) -> Ann
     ]
 
     try:
-        logging.info(f'==> Processing AddTemporalFeatures()')
         temporal = DatetimeFeatures(
             features_to_extract=features_to_extract).fit_transform(targets[['timestamp']])
         # for col in temporal.columns:
         #     data.loc[:, col] = temporal[col].values
-        logging.info(f'==> Successfully processed AddTemporalFeatures()')
         return temporal
     except Exception as e:
         logging.error(f'==> Error in AddTemporalFeatures()')

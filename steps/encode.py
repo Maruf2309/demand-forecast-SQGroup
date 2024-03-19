@@ -7,7 +7,7 @@ import numpy as np
 from typing_extensions import Annotated, Tuple
 
 
-@step(name='Encode and Aggregate Features', enable_artifact_metadata=True, enable_step_logs=True)
+@step(name='Encode and Aggregate Features', enable_artifact_metadata=True, enable_step_logs=True, enable_cache=False)
 def encode_and_aggregate_data(
     data: Annotated[pd.DataFrame, 'cleaned_data']
 ) -> Tuple[Annotated[pd.DataFrame, 'target'], Annotated[pd.DataFrame, 'static features'], Annotated[pd.DataFrame, 'aggregated application_group table'], Annotated[pd.DataFrame, 'aggregated uses tabe'], Annotated[pd.DataFrame, 'aggregated mkt table']]:
@@ -22,8 +22,7 @@ def encode_and_aggregate_data(
 
     """
     try:
-        logging.info('Encoding categorical features...')
-        
+
         # HASH FEATURES category
         data['category'] = data.category.apply(
             lambda cat: {'Domestic': 1, 'Power': 0}[cat])
@@ -91,7 +90,6 @@ def encode_and_aggregate_data(
             ratio = data.loc[data.outlet_id==outlet, 'mkt'].value_counts(normalize=True).to_dict()
             mkt.loc[outlet] = ratio
         mkt = mkt.fillna(0).reset_index().rename(columns={'index':'outlet_id'}).astype(np.float32)
-        logging.info('Encoding categorical features completed.')
         return targets, static_features, application_group, uses, mkt
     except Exception as e:
         logging.error(f'Error encoding categorical features: {e}')
