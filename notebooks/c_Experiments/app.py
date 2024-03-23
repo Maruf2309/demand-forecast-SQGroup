@@ -16,8 +16,10 @@ FEATURES = [
     ]
 # MODEL_URI: str = 'runs:/ae501105c42f4987b526ea740568507a/LGB-QTYM-0.7456832147065215'
 # MODEL: mlflow.pyfunc.PyFuncModel = load_model_by_mlflow_run(MODEL_URI)
-DATA: pd.DataFrame =  pd.read_parquet('https://github.com/skhapijulhossen/demand-forecast-SQGroup/blob/dev/notebooks/c_Experiments/processed.parquet')
-MODELS_QTYM: Dict = load_models(file_path='qtym_forecasting_models.pkl')
+DATA: pd.DataFrame =  pd.read_parquet(
+    'https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/notebooks/c_Experiments/processed.csv', 
+    )
+MODELS_QTYM: Dict = load_models(file_path='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/notebooks/c_Experiments/qtym_forecasting_models.pkl')
 MONTHS:  List[AnyStr] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January']
 
 
