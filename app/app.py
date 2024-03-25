@@ -28,7 +28,7 @@ st.set_page_config(
 # Globals
 # MODEL_URI: str = 'runs:/ae501105c42f4987b526ea740568507a/LGB-QTYM-0.7456832147065215'
 # MODEL: mlflow.pyfunc.PyFuncModel = load_model_by_mlflow_run(MODEL_URI)
-DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/processed.csv', )
+DATA: pd.DataFrame =  pd.read_csv('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/processed.csv', )
 MODELS_QTYM: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/qtym_forecasting_models.pkl')
 MODELS_NETPRICE: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/net_price_forecasting_models.pkl')
 MONTHS:  List[AnyStr] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January']
