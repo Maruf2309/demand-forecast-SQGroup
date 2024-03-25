@@ -42,7 +42,7 @@ def interfaceApp():
         st.title('SQ Group BYA Series Demand')
 
         # Create a layout with two columns
-        panelDemand, panelImportance = st.columns([2,1])
+        panelDemand, panelData= st.columns([2,1])
 
         # Create tabs
         with st.sidebar:
@@ -66,7 +66,7 @@ def interfaceApp():
                 future_forecast = forecastPanel(data=actual, model=MODELS_QTYM[outlet_id], outlet=outlet_id)
             
         # Numerics
-        with panelImportance:
+        with panelData:
                 st.subheader('Forecasted Data')    
                 # Display DataFrame
                 st.dataframe(future_forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']], use_container_width=True, height=600)
