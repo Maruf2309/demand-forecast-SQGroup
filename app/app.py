@@ -73,7 +73,7 @@ def interfaceApp():
             
         # Trends
         if tab_selection == 'Quantity':
-            st.subheader('Trend Componenets')
+            st.subheader('Trend & Seasonailty')
             plott  = plot_components_plotly(MODELS_QTYM[outlet_id], future_forecast)
             st.plotly_chart(plott, use_container_width=True)
         
