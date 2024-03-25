@@ -79,7 +79,7 @@ def interfaceApp():
         
         if tab_selection == 'Net Price':
             # Trends
-            st.subheader('Trend Componenets')
+            st.subheader('Trend & Seasonailty')
             plott  = plot_components_plotly(MODELS_QTYM[outlet_id], future_forecast)
             st.plotly_chart(plott, use_container_width=True)
     except Exception as e:
