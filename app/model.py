@@ -6,12 +6,12 @@ from prophet import Prophet
 
 
 @st.cache
-def train_by_outlets(data, target):
+def train_by(data, target, aggregate_by='outlet_id'):
     """Train model for each outlet"""
         
     # Train by outlet
     models = {}
-    for outlet_id in data.outlet_id.unique():
+    for key in data['outlet_id'].unique():
         model = Prophet(
             growth='linear',
             changepoints=None,
@@ -35,9 +35,9 @@ def train_by_outlets(data, target):
             
         # Train
         model.fit(
-            data[['timestamp', target]].rename(columns={'timestamp': 'ds', target: 'y'}).loc[data.outlet_id==outlet_id]
+            data[['timestamp', target]].rename(columns={'timestamp': 'ds', target: 'y'}).loc[data['outlet_id']==key]
         )
-        models[outlet_id] = model
+        models[key] = model
     # model.fit(data.rename(columns={'timestamp': 'ds', target: 'y'}))
     # models['all'] = model
     return models
