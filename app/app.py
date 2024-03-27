@@ -16,7 +16,7 @@ import plotly.graph_objs as go
 
 # Set main panel
 st.set_page_config(
-    page_title="SQ Analytics",
+    page_title="SQ Insights",
     page_icon="🧊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -33,8 +33,8 @@ st.set_page_config(
 OUTLET_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/processed.parquet', )
 REGION_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/region_aggreagted.parquet', )
 DIVISION_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/division_aggreagted.parquet', )
-CATEGORY_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/category_aggreagted.parquet', )
-MARKET_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/market_aggregated.parquet', )
+CATEGORY_DATA: pd.DataFrame =  pd.read_parquet('https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/category_aggregated.parquet', )
+MARKET_DATA: pd.DataFrame =  pd.read_parquet('https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/market_aggregated.parquet', )
 MODELS_OUTLET_QTYM: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/qtym_forecasting_models.pkl')
 MODELS_OUTLET_NETPRICE: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/net_price_forecasting_models.pkl')
 MODELS_REGION_QTYM: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/qtym_forecasting_models_by_region.pkl')
@@ -149,8 +149,8 @@ def interfaceApp():
                     st.plotly_chart(plott, use_container_width=True)
             elif selected == 'Category':
                 # Dropdown to select region
-                categories = sorted(CATEGORY_DATA.division.unique().tolist())
-                category = st.selectbox('Select Division', options=categories)
+                categories = sorted(CATEGORY_DATA.category.unique().tolist())
+                category = st.selectbox('Select category', options=categories)
                 # Tabs
                 if tab_selection == 'Quantity':
                     actual = CATEGORY_DATA[['timestamp', 'qtym']].rename(columns={'timestamp': 'ds', 'qtym': 'y'}).loc[CATEGORY_DATA.category==category]
@@ -176,7 +176,7 @@ def interfaceApp():
             else:
                 # Dropdown to select market
                 markets = sorted(MARKET_DATA.mkt.unique().tolist())
-                market = st.selectbox('Select Division', options=markets)
+                market = st.selectbox('Select Market', options=markets)
                 # Tabs
                 if tab_selection == 'Quantity':
                     actual = MARKET_DATA[['timestamp', 'qtym']].rename(columns={'timestamp': 'ds', 'qtym': 'y'}).loc[MARKET_DATA.mkt==market]
