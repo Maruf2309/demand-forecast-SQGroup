@@ -144,11 +144,11 @@ def interfaceApp():
             
             # Numerics
             with panelData:
-                    # st.subheader('Forecasted Data')    
+                    st.subheader('Next 90 Days Forecast')    
                     # Display DataFrame
-                    hist = px.histogram(data_frame=future_forecast[['ds', 'yhat']], y='ds', x='yhat')
-                    # st.dataframe(future_forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']], use_container_width=True, height=700)
-                    st.plotly_chart(figure_or_data=hist, use_container_width=True)
+                    # hist = px.histogram(data_frame=future_forecast[['ds', 'yhat']], y='ds', x='yhat', nbins=42)
+                    st.dataframe(future_forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']], use_container_width=True, height=700)
+                    # st.plotly_chart(figure_or_data=hist, use_container_width=True)
 
 
     except Exception as e:
