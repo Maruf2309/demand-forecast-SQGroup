@@ -11,6 +11,7 @@ from model import *
 from utils import *
 from components import forecastPanel
 from streamlit_option_menu import option_menu
+import plotly.graph_objs as go
 
 
 # Set main panel
@@ -55,7 +56,7 @@ def interfaceApp():
         
         with st.sidebar:
             selected = option_menu(
-                "SQ Analytics", ['Outlets', 'Regions', 'Divions'], 
+                "SQ Analytics", ['Outlets', 'Regions', 'Divisions'], 
                 icons=['house', 'gear'], menu_icon="cast", default_index=0
                 )
 
@@ -75,21 +76,20 @@ def interfaceApp():
                     # Plot forecast using Plotly
                     future_forecast = forecastPanel(data=actual, model=MODELS_OUTLET_QTYM[outlet_id], aggregated_by=outlet_id)
                 else:
-                    actual = OUTLET_DATA[['timestamp', 'net_price']].rename(columns={'timestamp': 'ds', 'netprice': 'y'}).loc[OUTLET_DATA.outlet_id==outlet_id]
+                    actual = OUTLET_DATA[['timestamp', 'net_price']].rename(columns={'timestamp': 'ds', 'net_price': 'y'}).loc[OUTLET_DATA.outlet_id==outlet_id]
                     # Plot forecast using Plotly                
-                    future_forecast = forecastPanel(data=actual, model=MODELS_OUTLET_QTYM[outlet_id], aggregated_by=outlet_id)
+                    future_forecast = forecastPanel(data=actual, model=MODELS_OUTLET_NETPRICE[outlet_id], aggregated_by=outlet_id)
                 
                 # Trends
-                ignore = ['multiplicative_terms', 'multiplicative_terms_lower', 'multiplicative_terms_upper']
                 if tab_selection == 'Quantity':
                     st.subheader('Trend & Seasonailty')
-                    plott  = plot_components_plotly(MODELS_OUTLET_QTYM[outlet_id], future_forecast.drop(columns=ignore))
+                    plott  = plot_components_plotly(MODELS_OUTLET_QTYM[outlet_id], future_forecast)
                     st.plotly_chart(plott, use_container_width=True)
                 
                 if tab_selection == 'Net Price':
                     # Trends
                     st.subheader('Trend & Seasonailty')
-                    plott  = plot_components_plotly(MODELS_OUTLET_QTYM[outlet_id], future_forecast.drop(columns=ignore))
+                    plott  = plot_components_plotly(MODELS_OUTLET_NETPRICE[outlet_id], future_forecast)
                     st.plotly_chart(plott, use_container_width=True)
             elif selected == 'Regions':
                 # Dropdown to select region
@@ -101,21 +101,20 @@ def interfaceApp():
                     # Plot forecast using Plotly
                     future_forecast = forecastPanel(data=actual, model=MODELS_REGION_QTYM[region], aggregated_by=region)
                 else:
-                    actual = REGION_DATA[['timestamp', 'net_price']].rename(columns={'timestamp': 'ds', 'netprice': 'y'}).loc[REGION_DATA.region==region]
+                    actual = REGION_DATA[['timestamp', 'net_price']].rename(columns={'timestamp': 'ds', 'net_price': 'y'}).loc[REGION_DATA.region==region]
                     # Plot forecast using Plotly                
-                    future_forecast = forecastPanel(data=actual, model=MODELS_REGION_QTYM[region], aggregated_by=region)
+                    future_forecast = forecastPanel(data=actual, model=MODELS_REGION_NETPRICE[region], aggregated_by=region)
                 
                 # Trends
-                ignore = ['multiplicative_terms', 'multiplicative_terms_lower', 'multiplicative_terms_upper']
                 if tab_selection == 'Quantity':
                     st.subheader('Trend & Seasonailty')
-                    plott  = plot_components_plotly(MODELS_REGION_QTYM[region], future_forecast.drop(columns=ignore))
+                    plott  = plot_components_plotly(MODELS_REGION_QTYM[region], future_forecast)
                     st.plotly_chart(plott, use_container_width=True)
                 
                 if tab_selection == 'Net Price':
                     # Trends
                     st.subheader('Trend & Seasonailty')
-                    plott  = plot_components_plotly(MODELS_REGION_QTYM[region], future_forecast.drop(columns=ignore))
+                    plott  = plot_components_plotly(MODELS_REGION_NETPRICE[region], future_forecast)
                     st.plotly_chart(plott, use_container_width=True)
             else:
                 # Dropdown to select region
@@ -125,30 +124,31 @@ def interfaceApp():
                 if tab_selection == 'Quantity':
                     actual = DIVISION_DATA[['timestamp', 'qtym']].rename(columns={'timestamp': 'ds', 'qtym': 'y'}).loc[DIVISION_DATA.division==division]
                     # Plot forecast using Plotly
-                    future_forecast = forecastPanel(data=actual, model=MODELS_REGION_QTYM[division], aggregated_by=division)
+                    future_forecast = forecastPanel(data=actual, model=MODELS_DIVISION_QTYM[division], aggregated_by=division)
                 else:
-                    actual = DIVISION_DATA[['timestamp', 'net_price']].rename(columns={'timestamp': 'ds', 'netprice': 'y'}).loc[DIVISION_DATA.division==division]
+                    actual = DIVISION_DATA[['timestamp', 'net_price']].rename(columns={'timestamp': 'ds', 'net_price': 'y'}).loc[DIVISION_DATA.division==division]
                     # Plot forecast using Plotly                
-                    future_forecast = forecastPanel(data=actual, model=MODELS_REGION_QTYM[division], aggregated_by=region)
+                    future_forecast = forecastPanel(data=actual, model=MODELS_DIVISION_NETPRICE[division], aggregated_by=division)
                 
                 # Trends
-                ignore = ['multiplicative_terms', 'multiplicative_terms_lower', 'multiplicative_terms_upper']
                 if tab_selection == 'Quantity':
                     st.subheader('Trend & Seasonailty')
-                    plott  = plot_components_plotly(MODELS_DIVISION_QTYM[division], future_forecast.drop(columns=ignore))
+                    plott  = plot_components_plotly(MODELS_DIVISION_QTYM[division], future_forecast)
                     st.plotly_chart(plott, use_container_width=True)
                 
                 if tab_selection == 'Net Price':
                     # Trends
                     st.subheader('Trend & Seasonailty')
-                    plott  = plot_components_plotly(MODELS_REGION_NETPRICE[division], future_forecast.drop(columns=ignore))
+                    plott  = plot_components_plotly(MODELS_DIVISION_NETPRICE[division], future_forecast)
                     st.plotly_chart(plott, use_container_width=True)
             
             # Numerics
             with panelData:
-                    st.subheader('Forecasted Data')    
+                    # st.subheader('Forecasted Data')    
                     # Display DataFrame
-                    st.dataframe(future_forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']], use_container_width=True, height=700)
+                    hist = px.histogram(data_frame=future_forecast[['ds', 'yhat']], y='ds', x='yhat')
+                    # st.dataframe(future_forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']], use_container_width=True, height=700)
+                    st.plotly_chart(figure_or_data=hist, use_container_width=True)
 
 
     except Exception as e:

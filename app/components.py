@@ -4,6 +4,7 @@ from typing import Dict, List, Any, Tuple
 from prophet.plot import plot_plotly
 import plotly.express as px
 from prophet import Prophet
+import plotly.graph_objs as go
 
 
 
@@ -23,3 +24,5 @@ def forecastPanel(data: pd.DataFrame, model: Prophet, aggregated_by: Any) -> pd.
         st.error(f'Error: {e}')
         st.stop()
         
+
+
