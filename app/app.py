@@ -33,12 +33,18 @@ st.set_page_config(
 OUTLET_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/processed.parquet', )
 REGION_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/region_aggreagted.parquet', )
 DIVISION_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/division_aggreagted.parquet', )
+CATEGORY_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/category_aggreagted.parquet', )
+MARKET_DATA: pd.DataFrame =  pd.read_parquet('https://raw.githubusercontent.com/skhapijulhossen/demand-forecast-SQGroup/dev/app/market_aggregated.parquet', )
 MODELS_OUTLET_QTYM: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/qtym_forecasting_models.pkl')
 MODELS_OUTLET_NETPRICE: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/net_price_forecasting_models.pkl')
 MODELS_REGION_QTYM: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/qtym_forecasting_models_by_region.pkl')
 MODELS_REGION_NETPRICE: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/net_price_forecasting_models_by_region.pkl')
 MODELS_DIVISION_QTYM: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/qtym_forecasting_models_by_division.pkl')
 MODELS_DIVISION_NETPRICE: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/net_price_forecasting_models_by_division.pkl')
+MODELS_CATEGORY_QTYM: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/qtym_forecasting_models_by_category.pkl')
+MODELS_CATEGORY_NETPRICE: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/net_price_forecasting_models_by_category.pkl')
+MODELS_MARKET_QTYM: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/qtym_forecasting_models_by_mkt.pkl')
+MODELS_MARKET_NETPRICE: Dict = load_models_from_url(url='https://github.com/skhapijulhossen/demand-forecast-SQGroup/raw/dev/app/net_price_forecasting_models_by_mkt.pkl')
 MONTHS:  List[AnyStr] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January']
 
 
@@ -56,8 +62,8 @@ def interfaceApp():
         
         with st.sidebar:
             selected = option_menu(
-                "SQ Analytics", ['Outlets', 'Regions', 'Divisions'], 
-                icons=['house', 'gear'], menu_icon="cast", default_index=0
+                "SQ Analytics", ['Outlets', 'Regions', 'Divisions', 'Category', 'Market'], 
+                icons=[], menu_icon="cast", default_index=0
                 )
 
 
@@ -116,7 +122,7 @@ def interfaceApp():
                     st.subheader('Trend & Seasonailty')
                     plott  = plot_components_plotly(MODELS_REGION_NETPRICE[region], future_forecast)
                     st.plotly_chart(plott, use_container_width=True)
-            else:
+            elif selected == 'Division':
                 # Dropdown to select region
                 divisions = sorted(DIVISION_DATA.division.unique().tolist())
                 division = st.selectbox('Select Division', options=divisions)
@@ -141,6 +147,57 @@ def interfaceApp():
                     st.subheader('Trend & Seasonailty')
                     plott  = plot_components_plotly(MODELS_DIVISION_NETPRICE[division], future_forecast)
                     st.plotly_chart(plott, use_container_width=True)
+            elif selected == 'Category':
+                # Dropdown to select region
+                categories = sorted(CATEGORY_DATA.division.unique().tolist())
+                category = st.selectbox('Select Division', options=categories)
+                # Tabs
+                if tab_selection == 'Quantity':
+                    actual = CATEGORY_DATA[['timestamp', 'qtym']].rename(columns={'timestamp': 'ds', 'qtym': 'y'}).loc[CATEGORY_DATA.category==category]
+                    # Plot forecast using Plotly
+                    future_forecast = forecastPanel(data=actual, model=MODELS_CATEGORY_QTYM[category], aggregated_by=category)
+                else:
+                    actual = CATEGORY_DATA[['timestamp', 'net_price']].rename(columns={'timestamp': 'ds', 'net_price': 'y'}).loc[CATEGORY_DATA.category==category]
+                    # Plot forecast using Plotly                
+                    future_forecast = forecastPanel(data=actual, model=MODELS_CATEGORY_NETPRICE[category], aggregated_by=category)
+                
+                # Trends
+                if tab_selection == 'Quantity':
+                    st.subheader('Trend & Seasonailty')
+                    plott  = plot_components_plotly(MODELS_CATEGORY_QTYM[category], future_forecast)
+                    st.plotly_chart(plott, use_container_width=True)
+                
+                if tab_selection == 'Net Price':
+                    # Trends
+                    st.subheader('Trend & Seasonailty')
+                    plott  = plot_components_plotly(MODELS_CATEGORY_NETPRICE[category], future_forecast)
+                    st.plotly_chart(plott, use_container_width=True)
+
+            else:
+                # Dropdown to select market
+                markets = sorted(MARKET_DATA.mkt.unique().tolist())
+                market = st.selectbox('Select Division', options=markets)
+                # Tabs
+                if tab_selection == 'Quantity':
+                    actual = MARKET_DATA[['timestamp', 'qtym']].rename(columns={'timestamp': 'ds', 'qtym': 'y'}).loc[MARKET_DATA.mkt==market]
+                    # Plot forecast using Plotly
+                    future_forecast = forecastPanel(data=actual, model=MODELS_MARKET_QTYM[market], aggregated_by=market)
+                else:
+                    actual = MARKET_DATA[['timestamp', 'net_price']].rename(columns={'timestamp': 'ds', 'net_price': 'y'}).loc[MARKET_DATA.mkt==market]
+                    # Plot forecast using Plotly                
+                    future_forecast = forecastPanel(data=actual, model=MODELS_MARKET_NETPRICE[category], aggregated_by=market)
+                
+                # Trends
+                if tab_selection == 'Quantity':
+                    st.subheader('Trend & Seasonailty')
+                    plott  = plot_components_plotly(MODELS_MARKET_QTYM[market], future_forecast)
+                    st.plotly_chart(plott, use_container_width=True)
+                
+                if tab_selection == 'Net Price':
+                    # Trends
+                    st.subheader('Trend & Seasonailty')
+                    plott  = plot_components_plotly(MODELS_MARKET_NETPRICE[market], future_forecast)
+                    st.plotly_chart(plott, use_container_width=True)          
             
             # Numerics
             with panelData:
