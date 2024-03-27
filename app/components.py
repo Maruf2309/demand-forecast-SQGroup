@@ -7,12 +7,12 @@ from prophet import Prophet
 
 
 
-def forecastPanel(data: pd.DataFrame, model: Prophet, outlet: Any) -> pd.DataFrame:
+def forecastPanel(data: pd.DataFrame, model: Prophet, aggregated_by: Any) -> pd.DataFrame:
     """
     Function to display the forecast panel
     """
     try:                
-        st.subheader(f'Demand Forecast for Outlet {outlet}')
+        st.subheader(f'Demand Forecast for {aggregated_by}')
         # Recursive forecast for the upcoming month
         future = model.make_future_dataframe(periods=90)
         future_forecast = model.predict(future)
